@@ -7,4 +7,23 @@ rf_model.pkl
 # Python
 __pycache__/
 *.pyc
+*.py[cod]
 .env
+*.egg-info/
+
+# Node — MOST IMPORTANT (100k+ files)
+node_modules/
+dist/
+.vite/
+build/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
+
+# Images (generated, not needed)
+fraud_analysis.png
+feature_importance.png
