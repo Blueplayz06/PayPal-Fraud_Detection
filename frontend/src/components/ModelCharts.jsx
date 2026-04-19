@@ -9,7 +9,7 @@ import {
 } from 'chart.js'
 ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend)
 
-const CHART_FONT = '"JetBrains Mono", monospace'
+const CHART_FONT = '"Inter", system-ui, sans-serif'
 
 const BASE_OPTIONS = {
   responsive:          true,
@@ -17,14 +17,14 @@ const BASE_OPTIONS = {
   plugins: { legend: { display: false } },
   scales: {
     x: {
-      ticks: { color: '#64748b', font: { family: CHART_FONT, size: 10 }, maxRotation: 0 },
+      ticks: { color: '#64748b', font: { family: CHART_FONT, size: 11, weight: 500 }, maxRotation: 0 },
       grid:  { display: false },
-      border:{ color: '#1e293b' },
+      border:{ color: '#1c3050' },
     },
     y: {
       ticks: { color: '#64748b', font: { family: CHART_FONT, size: 10 } },
-      grid:  { color: '#1e293b' },
-      border:{ color: '#1e293b' },
+      grid:  { color: 'rgba(28,48,80,0.2)' },
+      border:{ color: '#1c3050' },
     },
   },
 }
@@ -38,10 +38,15 @@ export default function ModelCharts({ stats }) {
     datasets: [{
       label: 'Count',
       data:  [cm.tn, cm.fp, cm.fn, cm.tp],
-      backgroundColor: ['#16a34a55', '#f9730044', '#f9730044', '#0ea5e955'],
-      borderColor:     ['#16a34a',   '#f97300',   '#f97300',   '#0ea5e9'  ],
+      backgroundColor: [
+        'rgba(22,163,106,0.25)',
+        'rgba(249,115,0,0.2)',
+        'rgba(249,115,0,0.2)',
+        'rgba(14,165,233,0.25)',
+      ],
+      borderColor: ['#16a34a', '#f97300', '#f97300', '#0ea5e9'],
       borderWidth: 1,
-      borderRadius: 4,
+      borderRadius: 6,
     }]
   }
 
@@ -50,6 +55,13 @@ export default function ModelCharts({ stats }) {
     plugins: {
       ...BASE_OPTIONS.plugins,
       tooltip: {
+        backgroundColor: '#0f1d32',
+        borderColor: '#1c3050',
+        borderWidth: 1,
+        titleFont: { family: CHART_FONT, size: 12, weight: 600 },
+        bodyFont: { family: CHART_FONT, size: 11 },
+        padding: 12,
+        cornerRadius: 10,
         callbacks: {
           label: (ctx) => ' Count: ' + ctx.parsed.y.toLocaleString()
         }
@@ -74,18 +86,20 @@ export default function ModelCharts({ stats }) {
       {
         label:           'Logistic Regression',
         data:            mc.logistic,
-        backgroundColor: '#1e3a5f',
-        borderColor:     '#1e6099',
+        backgroundColor: 'rgba(59,130,246,0.2)',
+        borderColor:     '#3b82f6',
         borderWidth:     1,
-        borderRadius:    4,
+        borderRadius:    6,
+        hoverBackgroundColor: 'rgba(59,130,246,0.35)',
       },
       {
         label:           'Random Forest',
         data:            mc.forest,
-        backgroundColor: '#0ea5e944',
-        borderColor:     '#0ea5e9',
+        backgroundColor: 'rgba(0,212,255,0.2)',
+        borderColor:     '#00d4ff',
         borderWidth:     1,
-        borderRadius:    4,
+        borderRadius:    6,
+        hoverBackgroundColor: 'rgba(0,212,255,0.35)',
       },
     ]
   }
@@ -95,8 +109,15 @@ export default function ModelCharts({ stats }) {
     plugins: {
       ...BASE_OPTIONS.plugins,
       tooltip: {
+        backgroundColor: '#0f1d32',
+        borderColor: '#1c3050',
+        borderWidth: 1,
+        titleFont: { family: CHART_FONT, size: 12, weight: 600 },
+        bodyFont: { family: CHART_FONT, size: 11 },
+        padding: 12,
+        cornerRadius: 10,
         callbacks: {
-          label: (ctx) => `${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%`
+          label: (ctx) => ` ${ctx.dataset.label}: ${ctx.parsed.y.toFixed(1)}%`
         }
       }
     },
@@ -114,50 +135,56 @@ export default function ModelCharts({ stats }) {
     }
   }
 
-  const Legend = ({ items }) => (
-    <div className="flex gap-4 mt-3">
+  const ChartLegend = ({ items }) => (
+    <div className="flex gap-4 mt-4 justify-center">
       {items.map(({ color, label }) => (
-        <span key={label} className="flex items-center gap-1.5 text-[11px] text-slate-500">
-          <span className="w-2.5 h-2.5 rounded-sm" style={{ background: color }} />
+        <span key={label} className="flex items-center gap-2 text-[11px] text-slate-400 font-medium">
+          <span className="w-3 h-3 rounded" style={{ background: color, boxShadow: `0 0 8px ${color}30` }} />
           {label}
         </span>
       ))}
     </div>
   )
 
+  const cmCards = [
+    { label: 'True Negative',  value: cm.tn, color: 'text-emerald-400', bg: 'rgba(16,185,129,0.05)', borderClr: 'rgba(16,185,129,0.1)' },
+    { label: 'False Positive', value: cm.fp, color: 'text-amber-400',   bg: 'rgba(245,158,11,0.05)', borderClr: 'rgba(245,158,11,0.1)' },
+    { label: 'False Negative', value: cm.fn, color: 'text-amber-400',   bg: 'rgba(245,158,11,0.05)', borderClr: 'rgba(245,158,11,0.1)' },
+    { label: 'True Positive',  value: cm.tp, color: 'text-cyan-400',    bg: 'rgba(6,182,212,0.05)',   borderClr: 'rgba(6,182,212,0.1)' },
+  ]
+
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 animate-slide-up">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-5">
       {/* Confusion matrix */}
-      <div className="card">
+      <div className="glass-card p-6 animate-slide-up z-10" style={{ animationDelay: '0.15s' }}>
         <span className="card-title">Confusion matrix</span>
         <div className="grid grid-cols-2 gap-2 mb-4">
-          {[
-            { label: 'True Negative',  value: cm.tn, color: 'text-emerald-400' },
-            { label: 'False Positive', value: cm.fp, color: 'text-amber-400'   },
-            { label: 'False Negative', value: cm.fn, color: 'text-amber-400'   },
-            { label: 'True Positive',  value: cm.tp, color: 'text-cyan-400'    },
-          ].map(({ label, value, color }) => (
-            <div key={label} className="bg-slate-800/50 rounded-lg px-3 py-2">
-              <p className="text-[10px] text-slate-600">{label}</p>
-              <p className={`text-lg font-semibold ${color}`}>{value.toLocaleString()}</p>
+          {cmCards.map(({ label, value, color, bg, borderClr }) => (
+            <div
+              key={label}
+              className="rounded-xl px-3 py-2.5 transition-all duration-200 hover:scale-[1.02]"
+              style={{ background: bg, border: `1px solid ${borderClr}` }}
+            >
+              <p className="text-[10px] text-slate-500 font-medium">{label}</p>
+              <p className={`text-lg font-bold ${color} font-mono mt-0.5`}>{value.toLocaleString()}</p>
             </div>
           ))}
         </div>
-        <div style={{ height: 160 }}>
+        <div style={{ height: 170 }}>
           <Bar data={cmData} options={cmOptions} />
         </div>
       </div>
 
       {/* Model comparison */}
-      <div className="card">
+      <div className="glass-card p-6 animate-slide-up z-10" style={{ animationDelay: '0.2s' }}>
         <span className="card-title">Model comparison</span>
-        <div style={{ height: 220 }}>
+        <div style={{ height: 230 }}>
           <Bar data={modelData} options={modelOptions} />
         </div>
-        <Legend
+        <ChartLegend
           items={[
-            { color: '#1e6099', label: 'Logistic Regression' },
-            { color: '#0ea5e9', label: 'Random Forest' },
+            { color: '#3b82f6', label: 'Logistic Regression' },
+            { color: '#00d4ff', label: 'Random Forest' },
           ]}
         />
       </div>

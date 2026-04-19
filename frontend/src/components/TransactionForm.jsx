@@ -1,29 +1,25 @@
 import { useState } from 'react'
 
 const DEFAULTS = {
-  amount: 149.62,
-  time:   406,
-  v1:    -1.3598,
-  v2:    -0.0728,
-  v3:     2.5363,
-  v4:     1.3781,
-  v14:   -2.3106,
-  v17:   -0.4660,
+  amount: '', time: '',
+  v1: 0, v2: 0, v3: 0, v4: 0,
+  v14: 0, v17: 0,
 }
 
 const FIELD_META = [
-  { key: 'amount', label: 'Amount (₹)',       full: true  },
-  { key: 'time',   label: 'Time (seconds)',    full: true  },
-  { key: 'v1',     label: 'V1',               full: false },
-  { key: 'v2',     label: 'V2',               full: false },
-  { key: 'v3',     label: 'V3',               full: false },
-  { key: 'v4',     label: 'V4',               full: false },
-  { key: 'v14',    label: 'V14 (high impact)', full: false },
-  { key: 'v17',    label: 'V17',              full: false },
+  { key: 'amount', label: 'Amount (₹)',       full: true,  icon: '💰' },
+  { key: 'time',   label: 'Time (seconds)',    full: true,  icon: '⏱️' },
+  { key: 'v1',     label: 'V1',               full: false, icon: null },
+  { key: 'v2',     label: 'V2',               full: false, icon: null },
+  { key: 'v3',     label: 'V3',               full: false, icon: null },
+  { key: 'v4',     label: 'V4',               full: false, icon: null },
+  { key: 'v14',    label: 'V14 (high impact)', full: false, icon: '⚠️' },
+  { key: 'v17',    label: 'V17',              full: false, icon: null },
 ]
 
 export default function TransactionForm({ onAnalyze, isLoading }) {
   const [fields, setFields] = useState(DEFAULTS)
+  const [focusedField, setFocusedField] = useState(null)
 
   const set = (k, v) => setFields(f => ({ ...f, [k]: v }))
 
@@ -49,34 +45,62 @@ export default function TransactionForm({ onAnalyze, isLoading }) {
     })
   }
 
+  const handleReset = () => setFields(DEFAULTS)
+
   return (
-    <form onSubmit={handleSubmit} className="card flex flex-col gap-4 animate-slide-up">
+    <form onSubmit={handleSubmit} className="glass-card p-6 flex flex-col gap-6 animate-slide-up">
+      {/* Header */}
       <div className="flex items-center justify-between">
         <span className="card-title mb-0">Transaction input</span>
-        <button
-          type="button"
-          onClick={handleRandom}
-          className="text-[11px] text-cyan-500 hover:text-cyan-300 transition-colors border border-cyan-900 hover:border-cyan-700 px-2.5 py-1 rounded-md"
-        >
-          Random sample
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            type="button"
+            onClick={handleReset}
+            className="text-[10px] text-slate-500 hover:text-slate-300 transition-colors px-2 py-1 rounded-lg"
+            style={{ border: '1px solid #1c3050' }}
+          >
+            Reset
+          </button>
+          <button
+            type="button"
+            onClick={handleRandom}
+            className="text-[10px] text-cyan-500 hover:text-cyan-300 transition-all duration-200 px-2.5 py-1 rounded-lg flex items-center gap-1"
+            style={{ border: '1px solid rgba(6,182,212,0.2)' }}
+          >
+            <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" />
+            </svg>
+            Random
+          </button>
+        </div>
       </div>
 
+      {/* Fields */}
       <div className="grid grid-cols-2 gap-3">
-        {FIELD_META.map(({ key, label, full }) => (
-          <div key={key} className={full ? 'col-span-2' : 'col-span-1'}>
-            <label className="block text-[11px] text-slate-500 mb-1">{label}</label>
+        {FIELD_META.map(({ key, label, full, icon }) => (
+          <div key={key} className={`${full ? 'col-span-2' : 'col-span-1'}`}>
+            <label className="flex items-center gap-1.5 text-[11px] text-slate-500 mb-1.5 font-medium">
+              {icon && <span className="text-[10px]">{icon}</span>}
+              {label}
+              {key === 'v14' && (
+                <span className="text-[8px] px-1.5 py-0.5 rounded-full" style={{ color: '#fbbf24', background: 'rgba(245,158,11,0.1)' }}>KEY</span>
+              )}
+            </label>
             <input
               type="number"
               step="any"
               value={fields[key]}
               onChange={(e) => set(key, e.target.value)}
+              onFocus={() => setFocusedField(key)}
+              onBlur={() => setFocusedField(null)}
               className="input-field"
+              placeholder={`Enter ${label.toLowerCase()}`}
             />
           </div>
         ))}
       </div>
 
+      {/* Submit */}
       <button type="submit" disabled={isLoading} className="btn-primary">
         {isLoading ? (
           <>
@@ -84,20 +108,20 @@ export default function TransactionForm({ onAnalyze, isLoading }) {
               <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
               <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
             </svg>
-            Analyzing...
+            <span>Analyzing...</span>
           </>
         ) : (
           <>
-            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/>
+            <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
             </svg>
-            Analyze transaction
+            <span>Analyze transaction</span>
           </>
         )}
       </button>
 
-      <p className="text-[10px] text-slate-600 text-center">
-        V1–V28 are PCA-transformed features from the Kaggle dataset
+      <p className="text-[10px] text-slate-600 text-center leading-relaxed">
+        V1–V28 are PCA-transformed features from the Kaggle credit card dataset
       </p>
     </form>
   )
