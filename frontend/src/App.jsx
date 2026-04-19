@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import axios from 'axios'
+import { motion } from 'framer-motion'
 import StatsBar from './components/StatsBar'
 import TransactionForm from './components/TransactionForm'
 import FraudGauge from './components/FraudGauge'
@@ -57,51 +58,53 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-[#020617] font-sans relative overflow-hidden text-slate-200">
-      {/* Background Orbs */}
-      <div className="bg-blob-1"></div>
-      <div className="bg-blob-2"></div>
-      <div className="bg-blob-3"></div>
-      <div className="fixed inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay z-0 pointer-events-none"></div>
+    <div className="min-h-screen font-sans relative overflow-hidden text-slate-200">
+      {/* Background overlays */}
+      <div className="bg-scanline-overlay"></div>
+      <div className="bg-grid-overlay"></div>
 
       {/* ── Header ── */}
-      <header className="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between backdrop-blur-2xl sticky top-0 z-30 border-b border-white/10 bg-[#020617]/50 shadow-2xl">
-        <div className="flex items-center gap-3">
+      <motion.header 
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ type: "spring", stiffness: 100, damping: 20 }}
+        className="px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between sticky top-0 z-50 border-b-2 border-brand-cyan/20 bg-black/80 backdrop-blur-md shadow-[0_4px_30px_rgba(0,240,255,0.15)]"
+      >
+        <div className="flex items-center gap-4">
           <div className="relative">
-            <div className="w-10 h-10 bg-gradient-to-br from-cyan-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg animate-float border border-white/20">
-              <svg viewBox="0 0 16 16" className="w-5 h-5 text-white" fill="none">
-                <path d="M8 1L1 4v4c0 3.5 2.8 6.7 7 7.5C13.2 14.7 15 11.5 15 8V4L8 1z" fill="currentColor"/>
+            <div className="w-12 h-12 bg-black border-2 border-brand-cyan flex items-center justify-center shadow-[0_0_15px_rgba(0,240,255,0.4)] animate-glitch" style={{ clipPath: 'polygon(10px 0, 100% 0, 100% calc(100% - 10px), calc(100% - 10px) 100%, 0 100%, 0 10px)' }}>
+              <svg viewBox="0 0 24 24" className="w-6 h-6 text-brand-cyan" fill="none" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="square" strokeLinejoin="miter" d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
               </svg>
             </div>
-            <div className="absolute -inset-1 rounded-xl blur-lg -z-10 animate-pulse-glow" style={{ background: 'rgba(6,182,212,0.4)' }} />
           </div>
           <div>
-            <h1 className="text-lg font-extrabold text-white tracking-tight">
-              FraudShield <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-500">AI</span>
+            <h1 className="text-xl font-black text-white tracking-[0.1em] uppercase">
+              FraudShield <span className="text-brand-cyan drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]">AI</span>
             </h1>
-            <p className="text-[11px] text-slate-400 font-medium uppercase tracking-widest">PayPal Fraud Detection System</p>
+            <p className="text-[10px] text-brand-cyan/60 font-mono tracking-[0.2em] uppercase mt-0.5">SYS.DEF.PROTOCOL</p>
           </div>
         </div>
 
-        <div className="flex items-center gap-3 sm:gap-4">
-          <span className="hidden md:flex items-center gap-2 text-[11px] text-slate-500">
-            <svg className="w-3.5 h-3.5 text-slate-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M20.25 6.375c0 2.278-3.694 4.125-8.25 4.125S3.75 8.653 3.75 6.375m16.5 0c0-2.278-3.694-4.125-8.25-4.125S3.75 4.097 3.75 6.375m16.5 0v11.25c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125V6.375m16.5 0v3.75m-16.5-3.75v3.75m16.5 0v3.75C20.25 16.153 16.556 18 12 18s-8.25-1.847-8.25-4.125v-3.75m16.5 0c0 2.278-3.694 4.125-8.25 4.125s-8.25-1.847-8.25-4.125" />
+        <div className="flex items-center gap-3 sm:gap-6">
+          <span className="hidden md:flex items-center gap-2 text-[10px] font-mono text-brand-pink/80 border border-brand-pink/30 px-3 py-1 bg-brand-pink/5 uppercase">
+            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+              <path strokeLinecap="square" strokeLinejoin="miter" d="M20 6c0 2.2-3.7 4-8.2 4S3.7 8.2 3.7 6m16.5 0c0-2.2-3.7-4-8.2-4S3.7 3.8 3.7 6m16.5 0v11c0 2.2-3.7 4-8.2 4s-8.2-1.8-8.2-4V6m16.5 0v3.7m-16.5-3.7v3.7m16.5 0v3.7c0 2.2-3.7 4-8.2 4s-8.2-1.8-8.2-4v-3.7m16.5 0c0 2.2-3.7 4-8.2 4s-8.2-1.8-8.2-4" />
             </svg>
-            <span className="text-slate-300 font-mono text-[10px]">creditcard.csv</span>
+            creditcard.csv
           </span>
-          <span className="flex items-center gap-2 text-[11px] font-medium px-3 py-1.5 rounded-full" style={{ background: 'rgba(16,185,129,0.1)', color: '#34d399', border: '1px solid rgba(16,185,129,0.2)' }}>
+          <span className="flex items-center gap-2 text-[11px] font-bold px-4 py-1.5 uppercase tracking-widest text-brand-green border border-brand-green shadow-[0_0_10px_rgba(57,255,20,0.2)] bg-black/50" style={{ clipPath: 'polygon(5px 0, 100% 0, 100% calc(100% - 5px), calc(100% - 5px) 100%, 0 100%, 0 5px)' }}>
             <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75" />
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-400" />
+              <span className="animate-pulse-fast absolute inline-flex h-full w-full bg-brand-green opacity-75" />
+              <span className="relative inline-flex h-2 w-2 bg-brand-green" />
             </span>
-            Model active
+            SYSTEM ONLINE
           </span>
         </div>
-      </header>
+      </motion.header>
 
       {/* ── Main content ── */}
-      <main className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-10 space-y-8 animate-fade-in">
+      <main className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12 space-y-8">
         <StatsBar stats={MODEL_STATS} />
 
         <div className="grid grid-cols-1 lg:grid-cols-[420px_1fr] gap-6">
@@ -114,14 +117,14 @@ export default function App() {
       </main>
 
       {/* ── Footer ── */}
-      <footer className="relative z-10 px-4 sm:px-6 lg:px-8 py-6 mt-10 border-t border-white/5 bg-[#020617]/50 backdrop-blur-md">
-        <div className="max-w-[1400px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-slate-500 font-medium uppercase tracking-wider">
-          <span>© 2026 FraudShield AI — Built for PayPal</span>
+      <footer className="relative z-10 px-4 sm:px-6 lg:px-8 py-6 mt-10 border-t-2 border-brand-cyan/20 bg-black/90 backdrop-blur-md">
+        <div className="max-w-[1400px] mx-auto flex flex-col sm:flex-row items-center justify-between gap-3 text-[11px] text-brand-cyan/50 font-mono tracking-widest uppercase">
+          <span>// 2026 FRAUDSHIELD AI . PAYPAL DIV</span>
           <span className="flex items-center gap-1.5">
-            Powered by
-            <span className="font-bold text-cyan-400">Random Forest</span>
-            &
-            <span className="font-bold text-blue-400">Logistic Regression</span>
+            PWR: 
+            <span className="font-bold text-brand-pink drop-shadow-[0_0_5px_rgba(255,0,60,0.5)]">RANDOM_FOREST</span>
+            &times;
+            <span className="font-bold text-brand-cyan drop-shadow-[0_0_5px_rgba(0,240,255,0.5)]">LOG_REG</span>
           </span>
         </div>
       </footer>

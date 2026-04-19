@@ -63,9 +63,9 @@ export default function StatsBar({ stats }) {
       suffix: '',
       decimals: 0,
       sub:   'Kaggle dataset',
-      color: 'text-white',
-      iconColor: 'text-cyan-400',
-      accentGrad: 'linear-gradient(to right, #06b6d4, #3b82f6)',
+      color: 'text-brand-cyan drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]',
+      iconColor: 'text-brand-cyan',
+      accentGrad: '#00f0ff',
       icon: ICONS.transactions,
     },
     {
@@ -74,9 +74,9 @@ export default function StatsBar({ stats }) {
       suffix: '',
       decimals: 0,
       sub:   `${((stats.fraudDetected / stats.totalTransactions) * 100).toFixed(3)}% of total`,
-      color: 'text-red-400',
-      iconColor: 'text-red-400',
-      accentGrad: 'linear-gradient(to right, #ef4444, #f97316)',
+      color: 'text-brand-pink drop-shadow-[0_0_8px_rgba(255,0,60,0.8)]',
+      iconColor: 'text-brand-pink',
+      accentGrad: '#ff003c',
       icon: ICONS.fraud,
     },
     {
@@ -85,9 +85,9 @@ export default function StatsBar({ stats }) {
       suffix: '%',
       decimals: 1,
       sub:   'Random Forest',
-      color: 'text-emerald-400',
-      iconColor: 'text-emerald-400',
-      accentGrad: 'linear-gradient(to right, #10b981, #14b8a6)',
+      color: 'text-brand-green drop-shadow-[0_0_8px_rgba(57,255,20,0.8)]',
+      iconColor: 'text-brand-green',
+      accentGrad: '#39ff14',
       icon: ICONS.accuracy,
     },
     {
@@ -96,9 +96,9 @@ export default function StatsBar({ stats }) {
       suffix: '',
       decimals: 3,
       sub:   'Fraud class only',
-      color: 'text-cyan-400',
-      iconColor: 'text-cyan-400',
-      accentGrad: 'linear-gradient(to right, #22d3ee, #6366f1)',
+      color: 'text-brand-yellow drop-shadow-[0_0_8px_rgba(252,238,9,0.8)]',
+      iconColor: 'text-brand-yellow',
+      accentGrad: '#fcee09',
       icon: ICONS.f1,
     },
   ]
@@ -108,28 +108,28 @@ export default function StatsBar({ stats }) {
       {cards.map((c, i) => (
         <div
           key={c.label}
-          className="glass-card p-5 sm:p-6 group animate-slide-up"
+          className="cyber-card p-5 sm:p-6 group animate-slide-up"
           style={{ animationDelay: `${i * 0.08}s` }}
         >
           {/* Hover accent line */}
           <div
-            className="absolute top-0 left-4 right-4 h-[2px] rounded-b-full opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-            style={{ background: c.accentGrad }}
+            className="absolute top-0 left-0 w-full h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_0_10px_currentColor]"
+            style={{ background: c.accentGrad, color: c.accentGrad }}
           />
 
-          <div className="flex items-start justify-between mb-3">
-            <p className="text-[10px] sm:text-[11px] tracking-[0.12em] uppercase text-slate-500 font-medium">
+          <div className="flex items-start justify-between mb-3 relative z-10">
+            <p className="text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-brand-cyan/60 font-mono font-bold">
               {c.label}
             </p>
-            <span className={`${c.iconColor} opacity-40 group-hover:opacity-70 transition-opacity duration-300`}>
+            <span className={`${c.iconColor} opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300`}>
               {c.icon}
             </span>
           </div>
 
-          <p className={`text-xl sm:text-2xl lg:text-[28px] font-bold ${c.color} font-mono tracking-tight`}>
+          <p className={`text-2xl sm:text-3xl lg:text-4xl font-black ${c.color} font-mono tracking-tighter relative z-10`}>
             <AnimatedNumber value={c.value} suffix={c.suffix} decimals={c.decimals} />
           </p>
-          <p className="text-[10px] sm:text-[11px] text-slate-600 mt-1">{c.sub}</p>
+          <p className="text-[10px] sm:text-[11px] text-brand-cyan/40 mt-1 font-mono uppercase tracking-widest relative z-10">>> {c.sub}</p>
         </div>
       ))}
     </div>
