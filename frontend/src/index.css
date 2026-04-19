@@ -115,5 +115,5 @@
   @apply fixed inset-0 z-[100] bg-cyber-scanline pointer-events-none opacity-30;
 }
 .bg-grid-overlay {
-  @apply fixed inset-0 z-[-1] bg-cyber-grid bg-grid pointer-events-none opacity-40;
+  @apply fixed inset-0 z-[-1] bg-cyber-grid pointer-events-none opacity-40;
 }
