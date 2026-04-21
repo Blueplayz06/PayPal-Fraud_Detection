@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { motion } from 'framer-motion'
 import Tilt from 'react-parallax-tilt'
 
 const DEFAULTS = {
@@ -8,14 +9,14 @@ const DEFAULTS = {
 }
 
 const FIELD_META = [
-  { key: 'amount', label: 'AMOUNT_INR',    full: true,  icon: '💳' },
-  { key: 'time',   label: 'TIMESTAMP_S',   full: true,  icon: '⏱️' },
-  { key: 'v1',     label: 'V1',            full: false, icon: null },
-  { key: 'v2',     label: 'V2',            full: false, icon: null },
-  { key: 'v3',     label: 'V3',            full: false, icon: null },
-  { key: 'v4',     label: 'V4',            full: false, icon: null },
-  { key: 'v14',    label: 'V14 [CRITICAL]',full: false, icon: '⚠️' },
-  { key: 'v17',    label: 'V17',           full: false, icon: null },
+  { key: 'amount', label: 'Amount (₹)',       full: true,  icon: '💰' },
+  { key: 'time',   label: 'Time (seconds)',    full: true,  icon: '⏱️' },
+  { key: 'v1',     label: 'V1',               full: false, icon: null },
+  { key: 'v2',     label: 'V2',               full: false, icon: null },
+  { key: 'v3',     label: 'V3',               full: false, icon: null },
+  { key: 'v4',     label: 'V4',               full: false, icon: null },
+  { key: 'v14',    label: 'V14 (high impact)', full: false, icon: '⚠️' },
+  { key: 'v17',    label: 'V17',              full: false, icon: null },
 ]
 
 export default function TransactionForm({ onAnalyze, isLoading }) {
@@ -49,38 +50,45 @@ export default function TransactionForm({ onAnalyze, isLoading }) {
   const handleReset = () => setFields(DEFAULTS)
 
   return (
-    <Tilt tiltMaxAngleX={2} tiltMaxAngleY={2} scale={1.01} transitionSpeed={2500} glareEnable={true} glareMaxOpacity={0.1} glareColor="#00f0ff" glarePosition="all" className="h-full">
-      <form onSubmit={handleSubmit} className="cyber-card p-6 flex flex-col gap-6 animate-slide-up h-full z-10">
+    <Tilt tiltMaxAngleX={1.5} tiltMaxAngleY={1.5} scale={1.005} transitionSpeed={2500} glareEnable={true} glareMaxOpacity={0.06} glareColor="#8b5cf6" glarePosition="all" className="h-full">
+      <form onSubmit={handleSubmit} className="royal-card p-6 flex flex-col gap-5 h-full">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-brand-cyan/20 pb-3">
-          <span className="card-title mb-0 drop-shadow-[0_0_5px_rgba(0,240,255,0.8)] text-shadow">Transaction_Input</span>
+        <div className="flex items-center justify-between relative z-10">
+          <span className="card-title mb-0">Transaction Input</span>
           <div className="flex items-center gap-2">
-            <button
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               type="button"
               onClick={handleReset}
-              className="text-[10px] text-brand-pink hover:text-white transition-colors px-2 py-1 bg-brand-pink/10 border border-brand-pink/30 uppercase font-bold tracking-wider"
+              className="text-[10px] text-slate-400 hover:text-slate-200 transition-colors px-2.5 py-1 rounded-lg border border-surface-600 bg-surface-800/50 font-medium"
             >
               Reset
-            </button>
-            <button
+            </motion.button>
+            <motion.button
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
               type="button"
               onClick={handleRandom}
-              className="text-[10px] text-brand-yellow hover:text-black hover:bg-brand-yellow transition-all duration-200 px-2.5 py-1 bg-brand-yellow/10 border border-brand-yellow/30 flex items-center gap-1 uppercase font-bold tracking-wider"
+              className="text-[10px] text-royal-400 hover:text-royal-300 transition-all duration-200 px-2.5 py-1 rounded-lg bg-royal-500/10 border border-royal-500/20 flex items-center gap-1 font-medium"
             >
-              Inject_Rand
-            </button>
+              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="2">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 12c0-1.232-.046-2.453-.138-3.662a4.006 4.006 0 00-3.7-3.7 48.678 48.678 0 00-7.324 0 4.006 4.006 0 00-3.7 3.7c-.017.22-.032.441-.046.662M19.5 12l3-3m-3 3l-3-3m-12 3c0 1.232.046 2.453.138 3.662a4.006 4.006 0 003.7 3.7 48.656 48.656 0 007.324 0 4.006 4.006 0 003.7-3.7c.017-.22.032-.441.046-.662M4.5 12l3 3m-3-3l-3 3" />
+              </svg>
+              Random Sample
+            </motion.button>
           </div>
         </div>
 
         {/* Fields */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-2 gap-3 relative z-10">
           {FIELD_META.map(({ key, label, full, icon }) => (
-            <div key={key} className={`${full ? 'col-span-2' : 'col-span-1'} relative group`}>
-              <label className={`flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-widest mb-1.5 transition-colors ${focusedField === key ? 'text-brand-pink drop-shadow-[0_0_5px_rgba(255,0,60,0.8)]' : 'text-brand-cyan/60'}`}>
-                {icon && <span className="text-[10px] filter grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100">{icon}</span>}
+            <div key={key} className={`${full ? 'col-span-2' : 'col-span-1'}`}>
+              <label className={`flex items-center gap-1.5 text-[11px] mb-1.5 font-medium transition-colors duration-200 ${focusedField === key ? 'text-royal-400' : 'text-slate-500'}`}>
+                {icon && <span className="text-[10px]">{icon}</span>}
                 {label}
                 {key === 'v14' && (
-                  <span className="text-[8px] px-1.5 py-0.5 border border-brand-yellow text-brand-yellow shadow-[0_0_5px_rgba(252,238,9,0.5)] bg-black/50 ml-1">KEY</span>
+                  <span className="text-[8px] px-1.5 py-0.5 rounded-full bg-gold-500/10 text-gold-400 border border-gold-500/20 font-semibold">KEY</span>
                 )}
               </label>
               <input
@@ -90,35 +98,41 @@ export default function TransactionForm({ onAnalyze, isLoading }) {
                 onChange={(e) => set(key, e.target.value)}
                 onFocus={() => setFocusedField(key)}
                 onBlur={() => setFocusedField(null)}
-                className="input-field placeholder:text-brand-cyan/20"
-                placeholder={focusedField === key ? '...' : `[${label.toLowerCase()}]`}
+                className="input-field"
+                placeholder={`Enter ${label.toLowerCase()}`}
               />
             </div>
           ))}
         </div>
 
         {/* Submit */}
-        <button type="submit" disabled={isLoading} className="btn-primary mt-auto">
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          type="submit"
+          disabled={isLoading}
+          className="btn-primary mt-auto relative z-10"
+        >
           {isLoading ? (
             <>
-              <svg className="animate-spin w-5 h-5" viewBox="0 0 24 24" fill="none">
+              <svg className="animate-spin w-4 h-4" viewBox="0 0 24 24" fill="none">
                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"/>
                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"/>
               </svg>
-              <span>ANALYZING_DATA...</span>
+              <span>Analyzing...</span>
             </>
           ) : (
             <>
-              <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+              <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75m-3-7.036A11.959 11.959 0 013.598 6 11.99 11.99 0 003 9.749c0 5.592 3.824 10.29 9 11.623 5.176-1.332 9-6.03 9-11.622 0-1.31-.21-2.571-.598-3.751h-.152c-3.196 0-6.1-1.248-8.25-3.285z" />
               </svg>
-              <span>RUN_DIAGNOSTICS</span>
+              <span>Analyze Transaction</span>
             </>
           )}
-        </button>
+        </motion.button>
 
-        <p className="text-[9px] text-brand-cyan/30 text-center font-mono uppercase tracking-[0.2em]">
-          PCA_TRANSFORMED_FEATURES // KAGGLE_DB_V1
+        <p className="text-[10px] text-slate-600 text-center leading-relaxed relative z-10">
+          V1–V28 are PCA-transformed features from the Kaggle credit card dataset
         </p>
       </form>
     </Tilt>

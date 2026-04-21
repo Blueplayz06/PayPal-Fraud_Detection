@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react'
+import { motion } from 'framer-motion'
 
 function AnimatedNumber({ value, suffix = '', decimals = 0 }) {
   const ref = useRef(null)
@@ -7,7 +8,7 @@ function AnimatedNumber({ value, suffix = '', decimals = 0 }) {
   useEffect(() => {
     if (!ref.current || isNaN(numericValue)) return
     let start = 0
-    const duration = 1200
+    const duration = 1400
     const startTime = performance.now()
 
     function animate(currentTime) {
@@ -58,36 +59,36 @@ const ICONS = {
 export default function StatsBar({ stats }) {
   const cards = [
     {
-      label: 'Total transactions',
+      label: 'Total Transactions',
       value: stats.totalTransactions,
       suffix: '',
       decimals: 0,
-      sub:   'Kaggle dataset',
-      color: 'text-brand-cyan drop-shadow-[0_0_8px_rgba(0,240,255,0.8)]',
-      iconColor: 'text-brand-cyan',
-      accentGrad: '#00f0ff',
+      sub:   'Kaggle Dataset',
+      color: 'text-white',
+      iconColor: 'text-royal-400',
+      accentColor: '#8b5cf6',
       icon: ICONS.transactions,
     },
     {
-      label: 'Fraud cases',
+      label: 'Fraud Cases',
       value: stats.fraudDetected,
       suffix: '',
       decimals: 0,
       sub:   `${((stats.fraudDetected / stats.totalTransactions) * 100).toFixed(3)}% of total`,
-      color: 'text-brand-pink drop-shadow-[0_0_8px_rgba(255,0,60,0.8)]',
-      iconColor: 'text-brand-pink',
-      accentGrad: '#ff003c',
+      color: 'text-red-400',
+      iconColor: 'text-red-400',
+      accentColor: '#ef4444',
       icon: ICONS.fraud,
     },
     {
-      label: 'Model accuracy',
+      label: 'Model Accuracy',
       value: stats.accuracy,
       suffix: '%',
       decimals: 1,
       sub:   'Random Forest',
-      color: 'text-brand-green drop-shadow-[0_0_8px_rgba(57,255,20,0.8)]',
-      iconColor: 'text-brand-green',
-      accentGrad: '#39ff14',
+      color: 'text-emerald-400',
+      iconColor: 'text-emerald-400',
+      accentColor: '#10b981',
       icon: ICONS.accuracy,
     },
     {
@@ -96,41 +97,41 @@ export default function StatsBar({ stats }) {
       suffix: '',
       decimals: 3,
       sub:   'Fraud class only',
-      color: 'text-brand-yellow drop-shadow-[0_0_8px_rgba(252,238,9,0.8)]',
-      iconColor: 'text-brand-yellow',
-      accentGrad: '#fcee09',
+      color: 'gold-shimmer',
+      iconColor: 'text-gold-400',
+      accentColor: '#fbbf24',
       icon: ICONS.f1,
     },
   ]
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
       {cards.map((c, i) => (
-        <div
+        <motion.div
           key={c.label}
-          className="cyber-card p-5 sm:p-6 group animate-slide-up"
-          style={{ animationDelay: `${i * 0.08}s` }}
+          whileHover={{ y: -4, transition: { type: 'spring', stiffness: 300, damping: 20 } }}
+          className="royal-card p-5 sm:p-6 group"
         >
-          {/* Hover accent line */}
+          {/* Top accent line */}
           <div
-            className="absolute top-0 left-0 w-full h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-300 shadow-[0_0_10px_currentColor]"
-            style={{ background: c.accentGrad, color: c.accentGrad }}
+            className="absolute top-0 left-0 w-full h-[2px] opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            style={{ background: `linear-gradient(90deg, transparent, ${c.accentColor}, transparent)` }}
           />
 
           <div className="flex items-start justify-between mb-3 relative z-10">
-            <p className="text-[10px] sm:text-[11px] tracking-[0.2em] uppercase text-brand-cyan/60 font-mono font-bold">
+            <p className="text-[11px] tracking-[0.12em] uppercase text-slate-500 font-medium">
               {c.label}
             </p>
-            <span className={`${c.iconColor} opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all duration-300`}>
+            <span className={`${c.iconColor} opacity-40 group-hover:opacity-80 transition-opacity duration-300`}>
               {c.icon}
             </span>
           </div>
 
-          <p className={`text-2xl sm:text-3xl lg:text-4xl font-black ${c.color} font-mono tracking-tighter relative z-10`}>
+          <p className={`text-2xl sm:text-3xl font-extrabold ${c.color} font-mono tracking-tight relative z-10`}>
             <AnimatedNumber value={c.value} suffix={c.suffix} decimals={c.decimals} />
           </p>
-          <p className="text-[10px] sm:text-[11px] text-brand-cyan/40 mt-1 font-mono uppercase tracking-widest relative z-10">>> {c.sub}</p>
-        </div>
+          <p className="text-[11px] text-slate-600 mt-1.5 relative z-10">{c.sub}</p>
+        </motion.div>
       ))}
     </div>
   )
