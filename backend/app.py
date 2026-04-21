@@ -2,12 +2,14 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 import joblib
 import numpy as np
+import pandas as pd
 import os
 
 app = Flask(__name__)
 CORS(app)  # Allow React dev server on port 3000
 
 MODEL_PATH = "fraud_model.pkl"
+CSV_PATH   = "creditcard.csv"
 
 # Load model once at startup
 if os.path.exists(MODEL_PATH):
@@ -17,16 +19,40 @@ else:
     model = None
     print("[FraudShield] WARNING: No model found. Run train_model.py first.")
 
+# Load dataset for sampling + fit scaler to match training
+df = None
+scaler = None
+if os.path.exists(CSV_PATH):
+    df = pd.read_csv(CSV_PATH)
+    from sklearn.preprocessing import StandardScaler
+    scaler = StandardScaler()
+    scaler.fit(df[["Amount", "Time"]])
+    print(f"[FraudShield] Dataset loaded ({len(df)} rows), scaler fitted.")
+else:
+    print("[FraudShield] WARNING: creditcard.csv not found. /sample will not work.")
+
 
 def build_features(data: dict) -> np.ndarray:
     """
     Build the feature array from incoming JSON.
     Must match the column order used during training.
     The Kaggle creditcard.csv has: Time, V1–V28, Amount
-    We only expose a subset in the UI but pass all 30 to the model.
+    We scale Time and Amount to match training preprocessing.
     """
+    raw_time   = data.get("time",   0)
+    raw_amount = data.get("amount", 0)
+
+    # Scale Time and Amount just like training did
+    if scaler is not None:
+        scaled = scaler.transform([[raw_amount, raw_time]])[0]
+        scaled_amount = scaled[0]
+        scaled_time   = scaled[1]
+    else:
+        scaled_time   = raw_time
+        scaled_amount = raw_amount
+
     features = [
-        data.get("time",   0),
+        scaled_time,
         data.get("v1",     0),
         data.get("v2",     0),
         data.get("v3",     0),
@@ -55,7 +81,7 @@ def build_features(data: dict) -> np.ndarray:
         data.get("v26",    0),
         data.get("v27",    0),
         data.get("v28",    0),
-        data.get("amount", 0),
+        scaled_amount,
     ]
     return np.array([features])
 
@@ -85,6 +111,32 @@ def predict():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route("/sample", methods=["GET"])
+def sample():
+    """Return a real row from the dataset. Pass ?type=fraud or ?type=normal."""
+    if df is None:
+        return jsonify({"error": "Dataset not loaded."}), 503
+
+    sample_type = request.args.get("type", "random")
+
+    if sample_type == "fraud":
+        pool = df[df["Class"] == 1]
+    elif sample_type == "normal":
+        pool = df[df["Class"] == 0]
+    else:
+        # 50/50 chance of fraud or normal
+        pool = df[df["Class"] == 1] if np.random.random() > 0.5 else df[df["Class"] == 0]
+
+    row = pool.sample(1).iloc[0]
+
+    return jsonify({
+        "amount": round(float(row["Amount"]), 2),
+        "time":   int(row["Time"]),
+        **{f"v{i}": round(float(row[f"V{i}"]), 6) for i in range(1, 29)},
+        "is_fraud": int(row["Class"]),
+    })
+
+
 @app.route("/stats", methods=["GET"])
 def stats():
     """Returns static model evaluation stats (update after retraining)."""
@@ -107,3 +159,4 @@ def health():
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)
+

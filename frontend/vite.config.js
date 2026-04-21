@@ -7,6 +7,7 @@ export default defineConfig({
     port: 3000,
     proxy: {
       '/predict': 'http://localhost:5000',
+      '/sample':  'http://localhost:5000',
       '/stats': 'http://localhost:5000',
       '/health': 'http://localhost:5000',
     }

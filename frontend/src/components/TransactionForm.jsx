@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Tilt from 'react-parallax-tilt'
+import axios from 'axios'
 
 const DEFAULTS = {
   amount: '', time: '',
@@ -22,6 +23,7 @@ const FIELD_META = [
 export default function TransactionForm({ onAnalyze, isLoading }) {
   const [fields, setFields] = useState(DEFAULTS)
   const [focusedField, setFocusedField] = useState(null)
+  const [sampleLabel, setSampleLabel] = useState(null)
 
   const set = (k, v) => setFields(f => ({ ...f, [k]: v }))
 
@@ -33,18 +35,36 @@ export default function TransactionForm({ onAnalyze, isLoading }) {
     onAnalyze(payload)
   }
 
-  const handleRandom = () => {
-    const fraud = Math.random() > 0.5
-    setFields({
-      amount: fraud ? +(Math.random() * 2000).toFixed(2) : +(Math.random() * 200).toFixed(2),
-      time:   Math.floor(Math.random() * 172800),
-      v1:     +(Math.random() * -6).toFixed(4),
-      v2:     +((Math.random() - 0.5) * 4).toFixed(4),
-      v3:     +((Math.random() - 0.5) * 6).toFixed(4),
-      v4:     +((Math.random() - 0.5) * 4).toFixed(4),
-      v14:    fraud ? +(Math.random() * -8).toFixed(4) : +((Math.random() - 0.5) * 3).toFixed(4),
-      v17:    +((Math.random() - 0.5) * 4).toFixed(4),
-    })
+  const handleRandom = async () => {
+    try {
+      const { data } = await axios.get('/sample')
+      // data contains all 28 V-features + amount + time + is_fraud
+      setFields({
+        amount: data.amount,
+        time:   data.time,
+        v1:  data.v1,  v2:  data.v2,  v3:  data.v3,  v4:  data.v4,
+        v5:  data.v5,  v6:  data.v6,  v7:  data.v7,  v8:  data.v8,
+        v9:  data.v9,  v10: data.v10, v11: data.v11, v12: data.v12,
+        v13: data.v13, v14: data.v14, v15: data.v15, v16: data.v16,
+        v17: data.v17, v18: data.v18, v19: data.v19, v20: data.v20,
+        v21: data.v21, v22: data.v22, v23: data.v23, v24: data.v24,
+        v25: data.v25, v26: data.v26, v27: data.v27, v28: data.v28,
+      })
+      setSampleLabel(data.is_fraud === 1 ? 'Fraud' : 'Normal')
+      setTimeout(() => setSampleLabel(null), 3000)
+    } catch {
+      // Fallback to basic random if backend is down
+      setFields({
+        amount: +(Math.random() * 2000).toFixed(2),
+        time:   Math.floor(Math.random() * 172800),
+        v1: +(Math.random() * -6).toFixed(4),
+        v2: +((Math.random() - 0.5) * 4).toFixed(4),
+        v3: +((Math.random() - 0.5) * 6).toFixed(4),
+        v4: +((Math.random() - 0.5) * 4).toFixed(4),
+        v14: +(Math.random() * -8).toFixed(4),
+        v17: +((Math.random() - 0.5) * 4).toFixed(4),
+      })
+    }
   }
 
   const handleReset = () => setFields(DEFAULTS)
