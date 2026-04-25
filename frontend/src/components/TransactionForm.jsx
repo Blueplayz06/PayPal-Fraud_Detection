@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion } from 'framer-motion'
 import Tilt from 'react-parallax-tilt'
 import axios from 'axios'
+import { API_BASE } from '../App'
 
 const DEFAULTS = {
   amount: '', time: '',
@@ -37,7 +38,7 @@ export default function TransactionForm({ onAnalyze, isLoading }) {
 
   const handleRandom = async () => {
     try {
-      const { data } = await axios.get('/sample')
+      const { data } = await axios.get(API_BASE + '/sample')
       // data contains all 28 V-features + amount + time + is_fraud
       setFields({
         amount: data.amount,

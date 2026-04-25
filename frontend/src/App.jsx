@@ -7,6 +7,10 @@ import FraudGauge from './components/FraudGauge'
 import ModelCharts from './components/ModelCharts'
 import RecentTransactions from './components/RecentTransactions'
 
+// In dev, Vite proxy handles /predict → localhost:5000
+// In production (Vercel), this points to the Render backend
+export const API_BASE = import.meta.env.VITE_API_URL || ''
+
 const INITIAL_TRANSACTIONS = []
 
 export const MODEL_STATS = {
@@ -48,7 +52,7 @@ export default function App() {
     setIsLoading(true)
     setError(null)
     try {
-      const { data } = await axios.post('/predict', formData)
+      const { data } = await axios.post(API_BASE + '/predict', formData)
       setPrediction(data)
       const newTxn = {
         id:     'TXN-' + Math.floor(1000 + Math.random() * 9000),
